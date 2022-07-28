@@ -180,7 +180,7 @@ pub fn native_object(_args: TokenStream, input: TokenStream) -> TokenStream {
                     let _0 = &mut *((((_0 as *mut T) as *mut u8) as usize - 8) as *mut T);
                     let params = match params.is_null() {
                         true => None,
-                        false => Some(std::slice::from_raw_parts_mut(params, (&mut *params).cb_elements as usize))
+                        false => Some(std::slice::from_raw_parts_mut(params, size))
                     };
                     _0.call_as_proc(num, params, size)
                 }
@@ -191,7 +191,7 @@ pub fn native_object(_args: TokenStream, input: TokenStream) -> TokenStream {
                     let _0 = &mut *((((_0 as *mut T) as *mut u8) as usize - 8) as *mut T);
                     let params = match params.is_null() {
                         true => None,
-                        false => Some(std::slice::from_raw_parts_mut(params, (&mut *params).cb_elements as usize))
+                        false => Some(std::slice::from_raw_parts_mut(params, size))
                     };
                     let ret = &mut *ret;
 
