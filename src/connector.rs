@@ -26,13 +26,13 @@ pub struct IConnector {
 
 impl IConnector {
     pub fn add_error(&mut self, code: u16, source: &str, descr: &str, scode: i64) -> bool {
-        let source = memory_manager().alloc_utf16_str(source);
-        let descr = memory_manager().alloc_utf16_str(descr);
+        let source = memory_manager().copy_utf16_str(source);
+        let descr = memory_manager().copy_utf16_str(descr);
         unsafe { (self.vtable.as_mut().add_error)(self, code, source, descr, scode) }
     }
 
     pub fn read(&mut self, prop_name: &str, value: &mut Variant, error: &mut u64, error_description: &mut String) -> bool {
-        let prop_name = memory_manager().alloc_utf16_str(prop_name);
+        let prop_name = memory_manager().copy_utf16_str(prop_name);
         let value = value as *mut Variant;
         let error = error as *mut u64;
         let mut error_description_ptr = std::ptr::null();
@@ -46,12 +46,12 @@ impl IConnector {
     }
 
     pub fn write(&mut self, prop_name: &str, value: &Variant) -> bool {
-        let prop_name = memory_manager().alloc_utf16_str(prop_name);
+        let prop_name = memory_manager().copy_utf16_str(prop_name);
         unsafe { (self.vtable.as_mut().write)(self, prop_name, value as *const Variant) }
     }
 
     pub fn register_profile_as(&mut self, profile_name: &str) -> bool {
-        let profile_name = memory_manager().alloc_utf16_str(profile_name);
+        let profile_name = memory_manager().copy_utf16_str(profile_name);
         unsafe { (self.vtable.as_mut().register_profile_as)(self, profile_name) }
     }
 
@@ -64,9 +64,9 @@ impl IConnector {
     }
 
     pub fn external_event(&mut self, source: &str, message: &str, data: &str) -> bool {
-        let source = memory_manager().alloc_utf16_str(source);
-        let message = memory_manager().alloc_utf16_str(message);
-        let data = memory_manager().alloc_utf16_str(data);
+        let source = memory_manager().copy_utf16_str(source);
+        let message = memory_manager().copy_utf16_str(message);
+        let data = memory_manager().copy_utf16_str(data);
         unsafe { (self.vtable.as_mut().external_event)(self, source, message, data) }
     }
 
@@ -75,7 +75,7 @@ impl IConnector {
     }
 
     pub fn set_status_line(&mut self, message: &str) -> bool {
-        let message = memory_manager().alloc_utf16_str(message);
+        let message = memory_manager().copy_utf16_str(message);
         unsafe { (self.vtable.as_mut().set_status_line)(self, message) }
     }
 

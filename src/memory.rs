@@ -26,7 +26,33 @@ impl IMemoryManager {
         }
     }
 
-    pub fn alloc_utf16_str(&mut self, value: &str) -> *const u16 {
+    pub fn copy_u8_array<T>(&mut self, value: &[T]) -> *const u8 {
+        let mut ptr = std::ptr::null_mut();
+        let data_ptr = value.as_ptr() as *const u8;
+        let size = value.len() * std::mem::size_of::<T>();
+        self.alloc_memory((&mut ptr as *mut *mut u8) as *mut *const c_void, size);
+        unsafe {
+            if !value.is_empty() {
+                std::ptr::copy(data_ptr, ptr, size);
+            }
+        }
+        ptr
+    }
+
+    pub fn copy_utf8_str(&mut self, value: &str) -> *const u8 {
+        let mut ptr = std::ptr::null_mut();
+        let data_ptr = value.as_ptr();
+        self.alloc_memory((&mut ptr as *mut *mut u8) as *mut *const c_void, value.len() + 1);
+        unsafe {
+            if !value.is_empty() {
+                std::ptr::copy(data_ptr, ptr, value.len() + 1);
+            }
+            std::ptr::write(((ptr as usize) + value.len()) as *mut u8, 0x00 as u8);
+        }
+        ptr
+    }
+
+    pub fn copy_utf16_str(&mut self, value: &str) -> *const u16 {
         let data = value.encode_utf16().collect::<Vec<u16>>();
         let data_ptr = data.as_ptr();
         let mut ptr = std::ptr::null_mut();

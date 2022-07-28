@@ -96,7 +96,7 @@ pub fn native_object(_args: TokenStream, input: TokenStream) -> TokenStream {
                 unsafe extern "C" fn get_prop_name<T: IComponentBase + IComponentInit>(_0: &T, num: i64, alias: i64) -> *const u16 {
                     let _0 = &*((((_0 as *const T) as *const u8) as usize - 8) as *const T);
                     let prop_name = _0.get_prop_name(num, alias);
-                    memory_manager().alloc_utf16_str(prop_name)
+                    memory_manager().copy_utf16_str(prop_name)
                 }
                 get_prop_name::<#ident>
             },
@@ -149,7 +149,7 @@ pub fn native_object(_args: TokenStream, input: TokenStream) -> TokenStream {
                 unsafe extern "C" fn get_method_name<T: IComponentBase + IComponentInit>(_0: &T, num: i64, alias: i64) -> *const u16 {
                     let _0 = &*((((_0 as *const T) as *const u8) as usize - 8) as *const T);
                     let method_name = _0.get_method_name(num, alias);
-                    memory_manager().alloc_utf16_str(method_name)
+                    memory_manager().copy_utf16_str(method_name)
                 }
                 get_method_name::<#ident>
             },
@@ -182,7 +182,7 @@ pub fn native_object(_args: TokenStream, input: TokenStream) -> TokenStream {
                         true => None,
                         false => Some(std::slice::from_raw_parts_mut(params, size))
                     };
-                    _0.call_as_proc(num, params, size)
+                    _0.call_as_proc(num, params)
                 }
                 call_as_proc::<#ident>
             },
@@ -195,7 +195,7 @@ pub fn native_object(_args: TokenStream, input: TokenStream) -> TokenStream {
                     };
                     let ret = &mut *ret;
 
-                    _0.call_as_func(num, ret, params, size)
+                    _0.call_as_func(num, ret, params)
                 }
                 call_as_func::<#ident>
             }
@@ -232,7 +232,7 @@ pub fn native_object(_args: TokenStream, input: TokenStream) -> TokenStream {
 
         impl IComponentInit for #ident {
             fn register_extension_as(&mut self, name: *mut *const u16) -> bool {
-                unsafe { *name = memory_manager().alloc_utf16_str(#ident_str); }
+                unsafe { *name = memory_manager().copy_utf16_str(#ident_str); }
                 true
             }
         }

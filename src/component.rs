@@ -82,8 +82,8 @@ pub trait IComponentBase {
     fn get_n_params(&self, method_num: i64) -> i64;
     fn get_param_def_value(&self, method_num: i64, param_num: i64, var_param_def_value: &mut Variant) -> bool;
     fn has_ret_val(&self, method_num: i64) -> bool;
-    fn call_as_proc(&mut self, method_num: i64, params: Option<&mut [Variant]>, size: usize) -> bool;
-    fn call_as_func(&mut self, method_num: i64, ret_vals: &mut Variant, params: Option<&mut [Variant]>, size: usize) -> bool;
+    fn call_as_proc(&mut self, method_num: i64, params: Option<&mut [Variant]>) -> bool;
+    fn call_as_func(&mut self, method_num: i64, ret_vals: &mut Variant, params: Option<&mut [Variant]>) -> bool;
 
     // LocaleBaseVTable
     fn set_locale(&mut self, loc: &str);
