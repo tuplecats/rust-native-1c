@@ -1,8 +1,8 @@
 use std::ffi::c_void;
 use std::ptr::NonNull;
-use crate::IConnector;
 use crate::memory::IMemoryManager;
 use crate::types::Variant;
+use crate::connector::IConnector;
 
 #[repr(C)]
 pub struct IInitDoneBaseVTable<T> {
@@ -48,12 +48,16 @@ pub struct IComponentBaseVTable<T> {
 }
 
 pub trait IComponentInit where Self: IComponentBase {
-    fn set_mem_manager(&mut self, mem: *mut c_void) -> bool {
-        crate::set_memory_manager(mem as *mut IMemoryManager)
-    }
+    fn set_mem_manager(&mut self, mem: *mut c_void) -> bool;
+
+    fn mem_manager(&self) -> &mut IMemoryManager;
+
+    fn connector(&self) -> &mut IConnector;
+
+    fn set_connector(&mut self, connector: *mut c_void) -> bool;
 
     fn _init(&mut self, connector: *mut c_void) -> bool {
-        if crate::set_connector(connector as *mut IConnector) {
+        if self.set_connector(connector) {
             return IComponentBase::init(self)
         }
         return false

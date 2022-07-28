@@ -1,5 +1,6 @@
 use core::ffi::c_char;
-use crate::memory_manager;
+use crate::component::IComponentInit;
+use crate::memory::IMemoryManager;
 
 #[allow(non_camel_case_types)]
 #[repr(u16)]
@@ -271,131 +272,62 @@ impl Variant {
         }
     }
 
-    pub fn utf8_string(value: &str) -> Variant {
+    pub fn empty() -> Variant {
         Variant {
-            value: VariantUnion { pstr_val: (memory_manager().copy_utf8_str(value) as *const i8, value.len() as u32 )},
+            value: VariantUnion { i8val: 0 },
+            cb_elements: 0,
+            vt: VariableType::VTYPE_EMPTY
+        }
+    }
+
+    pub fn utf8_string<T: IComponentInit>(owner: &T, value: &str) -> Variant {
+        Variant {
+            value: VariantUnion { pstr_val: (owner.mem_manager().copy_utf8_str(value) as *const i8, value.len() as u32 )},
             cb_elements: 0,
             vt: VariableType::VTYPE_PSTR
         }
     }
 
-    pub fn utf16_string(value: &str) -> Variant {
+    pub fn utf16_string<T: IComponentInit>(owner: &T, value: &str) -> Variant {
         Variant {
-            value: VariantUnion { pwstr_val: (memory_manager().copy_utf16_str(value), value.len() as u32 )},
+            value: VariantUnion { pwstr_val: (owner.mem_manager().copy_utf16_str(value), value.len() as u32 )},
             cb_elements: 0,
             vt: VariableType::VTYPE_PWSTR
         }
     }
 
-}
-
-impl<T> From<&[T]> for Variant {
-    fn from(value: &[T]) -> Self {
-        let size = value.len() * std::mem::size_of::<T>();
+    pub fn blob<T: IComponentInit, V>(owner: &T, value: &[V]) -> Variant {
+        let size = value.len() * std::mem::size_of::<V>();
         Variant {
-            value: VariantUnion { pstr_val: (memory_manager().copy_u8_array(value) as *const i8, size as u32 )},
+            value: VariantUnion { pstr_val: (owner.mem_manager().copy_u8_array(value) as *const i8, size as u32 )},
             cb_elements: 0,
             vt: VariableType::VTYPE_BLOB
         }
     }
+
 }
 
-impl From<bool> for Variant {
-    fn from(value: bool) -> Self {
-        Variant {
-            value: VariantUnion { b_val: value },
-            cb_elements: 0,
-            vt: VariableType::VTYPE_UI1
+macro_rules! variant_from {
+    ($from:ty, $field:tt, $vt:expr) => {
+        impl From<$from> for Variant {
+            fn from(value: $from) -> Self {
+                Self {
+                    value: VariantUnion { $field: value},
+                    cb_elements: 0,
+                    vt: $vt
+                }
+            }
         }
     }
 }
 
-impl From<u8> for Variant {
-    fn from(value: u8) -> Self {
-        Variant {
-            value: VariantUnion { ui8val: value },
-            cb_elements: 0,
-            vt: VariableType::VTYPE_UI1
-        }
-    }
-}
-
-impl From<u16> for Variant {
-    fn from(value: u16) -> Self {
-        Variant {
-            value: VariantUnion { ushort_val: value },
-            cb_elements: 0,
-            vt: VariableType::VTYPE_UI2
-        }
-    }
-}
-
-impl From<u32> for Variant {
-    fn from(value: u32) -> Self {
-        Variant {
-            value: VariantUnion { ul_val: value },
-            cb_elements: 0,
-            vt: VariableType::VTYPE_UI4
-        }
-    }
-}
-
-impl From<u64> for Variant {
-    fn from(value: u64) -> Self {
-        Variant {
-            value: VariantUnion { ull_val: value },
-            cb_elements: 0,
-            vt: VariableType::VTYPE_UI8
-        }
-    }
-}
-
-impl From<i8> for Variant {
-    fn from(value: i8) -> Self {
-        Variant {
-            value: VariantUnion { i8val: value },
-            cb_elements: 0,
-            vt: VariableType::VTYPE_I1
-        }
-    }
-}
-
-impl From<i16> for Variant {
-    fn from(value: i16) -> Self {
-        Variant {
-            value: VariantUnion { short_val: value },
-            cb_elements: 0,
-            vt: VariableType::VTYPE_I2
-        }
-    }
-}
-
-impl From<i32> for Variant {
-    fn from(value: i32) -> Self {
-        Variant {
-            value: VariantUnion { l_val: value },
-            cb_elements: 0,
-            vt: VariableType::VTYPE_I4
-        }
-    }
-}
-
-impl From<i64> for Variant {
-    fn from(value: i64) -> Self {
-        Variant {
-            value: VariantUnion { ll_val: value },
-            cb_elements: 0,
-            vt: VariableType::VTYPE_I8
-        }
-    }
-}
-
-impl From<f64> for Variant {
-    fn from(value: f64) -> Self {
-        Variant {
-            value: VariantUnion { dbl_val: value },
-            cb_elements: 0,
-            vt: VariableType::VTYPE_R8
-        }
-    }
-}
+variant_from!(bool, b_val, VariableType::VTYPE_BOOL);
+variant_from!(u8, ui8val, VariableType::VTYPE_UI1);
+variant_from!(u16, ushort_val, VariableType::VTYPE_UI2);
+variant_from!(u32, ul_val, VariableType::VTYPE_UI4);
+variant_from!(u64, ull_val, VariableType::VTYPE_UI8);
+variant_from!(i8, i8val, VariableType::VTYPE_I1);
+variant_from!(i16, short_val, VariableType::VTYPE_I2);
+variant_from!(i32, l_val, VariableType::VTYPE_I4);
+variant_from!(i64, ll_val, VariableType::VTYPE_I8);
+variant_from!(f64, dbl_val, VariableType::VTYPE_R8);

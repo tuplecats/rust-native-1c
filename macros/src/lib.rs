@@ -96,7 +96,7 @@ pub fn native_object(_args: TokenStream, input: TokenStream) -> TokenStream {
                 unsafe extern "C" fn get_prop_name<T: IComponentBase + IComponentInit>(_0: &T, num: i64, alias: i64) -> *const u16 {
                     let _0 = &*((((_0 as *const T) as *const u8) as usize - 8) as *const T);
                     let prop_name = _0.get_prop_name(num, alias);
-                    memory_manager().copy_utf16_str(prop_name)
+                    _0.mem_manager().copy_utf16_str(prop_name)
                 }
                 get_prop_name::<#ident>
             },
@@ -149,7 +149,7 @@ pub fn native_object(_args: TokenStream, input: TokenStream) -> TokenStream {
                 unsafe extern "C" fn get_method_name<T: IComponentBase + IComponentInit>(_0: &T, num: i64, alias: i64) -> *const u16 {
                     let _0 = &*((((_0 as *const T) as *const u8) as usize - 8) as *const T);
                     let method_name = _0.get_method_name(num, alias);
-                    memory_manager().copy_utf16_str(method_name)
+                    _0.mem_manager().copy_utf16_str(method_name)
                 }
                 get_method_name::<#ident>
             },
@@ -222,6 +222,8 @@ pub fn native_object(_args: TokenStream, input: TokenStream) -> TokenStream {
         #[repr(C)]
         struct Inner {
             vtable: IComponentBaseVTable<#ident>,
+            memory_manager: RefCell<*mut IMemoryManager>,
+            connector1c: RefCell<*mut IConnector>,
         }
 
         impl #ident {
@@ -232,7 +234,25 @@ pub fn native_object(_args: TokenStream, input: TokenStream) -> TokenStream {
 
         impl IComponentInit for #ident {
             fn register_extension_as(&mut self, name: *mut *const u16) -> bool {
-                unsafe { *name = memory_manager().copy_utf16_str(#ident_str); }
+                unsafe { *name = self.mem_manager().copy_utf16_str(#ident_str); }
+                true
+            }
+
+            fn set_mem_manager(&mut self, mem: *mut c_void) -> bool {
+                self.inner.memory_manager = RefCell::new(mem as *mut IMemoryManager);
+                true
+            }
+
+            fn mem_manager(&self) -> &mut IMemoryManager {
+                unsafe { self.inner.memory_manager.borrow_mut().as_mut().unwrap() }
+            }
+
+            fn connector(&self) -> &mut IConnector {
+                unsafe { self.inner.connector1c.borrow_mut().as_mut().unwrap() }
+            }
+
+            fn set_connector(&mut self, connector: *mut c_void) -> bool {
+                self.inner.connector1c = RefCell::new(connector as *mut IConnector);
                 true
             }
         }
@@ -245,6 +265,8 @@ pub fn native_object(_args: TokenStream, input: TokenStream) -> TokenStream {
                         language_extension_vtable: NonNull::from(&#language_ext_vtable_name),
                         locale_base_vtable: NonNull::from(&#locale_vtable_name),
                     },
+                    memory_manager: RefCell::new(std::ptr::null_mut()),
+                    connector1c: RefCell::new(std::ptr::null_mut()),
                 }
             }
         }
@@ -259,10 +281,11 @@ pub fn native_object(_args: TokenStream, input: TokenStream) -> TokenStream {
 
             use std::ptr::NonNull;
             use std::ffi::c_void;
+            use std::cell::RefCell;
             use ::native_1c::component::*;
             use ::native_1c::memory::*;
+            use ::native_1c::connector::*;
             use ::native_1c::types::*;
-            use ::native_1c::memory_manager;
             use ::native_1c::Derivative;
             use ::native_1c::widestring;
 
