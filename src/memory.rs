@@ -1,12 +1,6 @@
 use std::ffi::c_void;
 use std::ptr::NonNull;
-use once_cell::sync::OnceCell;
 
-static MEMORY_MANAGER: OnceCell<*mut IMemoryManager> = OnceCell::new();
-
-pub fn memory_manager() -> &mut IMemoryManager {
-    unsafe { &mut *(*MEMORY_MANAGER.get().unwrap()) }
-}
 
 #[repr(C)]
 pub struct IMemoryManagerVTable {

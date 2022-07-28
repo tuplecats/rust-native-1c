@@ -1,12 +1,13 @@
 use std::ffi::c_void;
 use std::ptr::NonNull;
+use crate::IConnector;
 use crate::memory::IMemoryManager;
 use crate::types::Variant;
 
 #[repr(C)]
 pub struct IInitDoneBaseVTable<T> {
     pub drop: unsafe extern "C" fn(&mut T),
-    pub init: unsafe extern "C" fn(&mut T, *const c_void) -> bool,
+    pub init: unsafe extern "C" fn(&mut T, *mut c_void) -> bool,
     pub set_mem_manager: unsafe extern "C" fn(&mut T, *mut c_void) -> bool,
     pub get_info: unsafe extern "C" fn(&T) -> i64,
     pub done: unsafe extern "C" fn(&mut T),
@@ -46,17 +47,24 @@ pub struct IComponentBaseVTable<T> {
     pub locale_base_vtable: NonNull<LocaleBaseVTable<T>>,
 }
 
-pub trait IComponentInit {
-    fn mem_manager(&self) -> &mut IMemoryManager;
+pub trait IComponentInit where Self: IComponentBase {
+    fn set_mem_manager(&mut self, mem: *mut c_void) -> bool {
+        crate::set_memory_manager(mem as *mut IMemoryManager)
+    }
 
-    fn set_mem_manager(&mut self, mem: *mut c_void) -> bool;
+    fn _init(&mut self, connector: *mut c_void) -> bool {
+        if crate::set_connector(connector as *mut IConnector) {
+            return IComponentBase::init(self)
+        }
+        return false
+    }
 
     fn register_extension_as(&mut self, name: *mut *const u16) -> bool;
 }
 
 pub trait IComponentBase {
     // IInitDoneBaseVTable
-    fn init(&mut self, disp: *const c_void) -> bool;
+    fn init(&mut self) -> bool;
     fn get_info(&self) -> i64;
     fn done(&mut self);
 
