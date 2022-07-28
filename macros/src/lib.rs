@@ -222,7 +222,6 @@ pub fn native_object(_args: TokenStream, input: TokenStream) -> TokenStream {
         #[repr(C)]
         struct Inner {
             vtable: IComponentBaseVTable<#ident>,
-            mem_manager: *mut IMemoryManager,
         }
 
         impl #ident {
@@ -246,7 +245,6 @@ pub fn native_object(_args: TokenStream, input: TokenStream) -> TokenStream {
                         language_extension_vtable: NonNull::from(&#language_ext_vtable_name),
                         locale_base_vtable: NonNull::from(&#locale_vtable_name),
                     },
-                    mem_manager: std::ptr::null_mut(),
                 }
             }
         }
