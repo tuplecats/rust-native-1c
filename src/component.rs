@@ -6,6 +6,8 @@ use crate::connector::IConnector;
 
 #[repr(C)]
 pub struct IInitDoneBaseVTable<T> {
+    #[cfg(target_os = "linux")]
+    pub offset_linux: u64,
     pub drop: unsafe extern "C" fn(&mut T),
     pub init: unsafe extern "C" fn(&mut T, *mut c_void) -> bool,
     pub set_mem_manager: unsafe extern "C" fn(&mut T, *mut c_void) -> bool,
@@ -15,6 +17,8 @@ pub struct IInitDoneBaseVTable<T> {
 
 #[repr(C)]
 pub struct ILanguageExtenderBaseVTable<T> {
+    #[cfg(target_os = "linux")]
+    pub offset_linux: u64,
     pub drop: unsafe extern "C" fn(&mut T),
     pub register_extension_as: unsafe extern "C" fn(&mut T, *mut *const u16) -> bool,
     pub get_n_props: unsafe extern "C" fn(&mut T) -> i64,
@@ -36,6 +40,8 @@ pub struct ILanguageExtenderBaseVTable<T> {
 
 #[repr(C)]
 pub struct LocaleBaseVTable<T> {
+    #[cfg(target_os = "linux")]
+    pub offset_linux: u64,
     pub drop: unsafe extern "C" fn(&mut T),
     pub set_locale: unsafe extern "C" fn(&mut T, *const u16)
 }

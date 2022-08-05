@@ -4,6 +4,8 @@ use std::ptr::NonNull;
 
 #[repr(C)]
 pub struct IMemoryManagerVTable {
+    #[cfg(target_os = "linux")]
+    offset_linux: u64,
     _drop: unsafe extern "C" fn(&mut IMemoryManager),
     _alloc_memory: unsafe extern "C" fn(&mut IMemoryManager, *mut *const c_void, usize) -> bool,
     _free_memory: unsafe extern "C" fn(&mut IMemoryManager, *mut *const c_void),

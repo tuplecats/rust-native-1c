@@ -3,6 +3,7 @@ use std::ptr::NonNull;
 use widestring::U16CStr;
 use crate::memory::IMemoryManager;
 use crate::types::Variant;
+use crate::info::{AppInfo, IPlatformInfo};
 
 #[repr(u8)]
 enum Interface {
@@ -23,6 +24,8 @@ struct IMessageBox {
 
 #[repr(C)]
 struct IConnectorVTable {
+    #[cfg(target_os = "linux")]
+    pub offset_linux: u64,
     _drop: unsafe extern "C" fn(&mut IConnector),
     add_error: unsafe extern "C" fn(&mut IConnector, u16, *const u16, *const u16, i64) -> bool,
     read: unsafe extern "C" fn(&mut IConnector, *const u16, *const Variant, *mut u64, *const *const u16) -> bool,
@@ -138,5 +141,21 @@ impl IConnector {
         else {
             Err(())
         }
+    }
+
+    #[must_use]
+    pub fn platform_info(&mut self) -> Result<AppInfo, ()> {
+        let interface = self.get_interface(Interface::IPlatformInfo);
+        if interface.is_null() {
+            return Err(())
+        }
+
+        let interface = unsafe { &mut *(interface as *mut IPlatformInfo) };
+        let result = unsafe { (interface.vtable.as_mut().get_platform_info)(interface) };
+        if result.is_null() {
+            return Err(())
+        }
+
+        Ok(AppInfo::from(unsafe { &*result }))
     }
 }

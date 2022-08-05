@@ -30,6 +30,8 @@ pub fn native_object(_args: TokenStream, input: TokenStream) -> TokenStream {
 
         #[allow(non_upper_case_globals)]
         static #base_done_vtable_name: IInitDoneBaseVTable<#ident> = IInitDoneBaseVTable {
+            #[cfg(target_os = "linux")]
+            offset_linux: 0,
             drop: {
                 unsafe extern "C" fn drop<T: IComponentBase>(_0: &mut T) {
 
@@ -64,6 +66,8 @@ pub fn native_object(_args: TokenStream, input: TokenStream) -> TokenStream {
 
         #[allow(non_upper_case_globals)]
         static #language_ext_vtable_name: ILanguageExtenderBaseVTable<#ident> = ILanguageExtenderBaseVTable {
+            #[cfg(target_os = "linux")]
+            offset_linux: 0,
             drop: {
                 unsafe extern "C" fn drop<T: IComponentBase>(_0: &mut T) {
 
@@ -203,6 +207,8 @@ pub fn native_object(_args: TokenStream, input: TokenStream) -> TokenStream {
 
         #[allow(non_upper_case_globals)]
         static #locale_vtable_name: LocaleBaseVTable<#ident> = LocaleBaseVTable {
+            #[cfg(target_os = "linux")]
+            offset_linux: 0,
             drop: {
                 unsafe extern "C" fn drop<T: IComponentBase>(_0: &mut T) {
 

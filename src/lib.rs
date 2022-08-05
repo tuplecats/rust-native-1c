@@ -1,4 +1,5 @@
 extern crate derivative;
+extern crate libc;
 
 pub use once_cell::sync::OnceCell;
 pub use derivative::Derivative;
@@ -10,4 +11,5 @@ pub mod component;
 pub mod types;
 pub mod memory;
 pub mod connector;
+pub mod info;
 

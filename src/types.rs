@@ -1,6 +1,5 @@
-use core::ffi::c_char;
+use libc::{tm, c_char};
 use crate::component::IComponentInit;
-use crate::memory::IMemoryManager;
 
 #[allow(non_camel_case_types)]
 #[repr(u16)]
@@ -59,7 +58,8 @@ pub union VariantUnion {
     pvar_val: *const Variant,
     pwstr_val: (*const u16, u32),
     pstr_val: (*const c_char, u32),
-    nothing: [u8;34]
+    tm_val: tm,
+    //nothing: [u8;34]
 }
 
 #[repr(C)]
@@ -312,7 +312,7 @@ macro_rules! variant_from {
         impl From<$from> for Variant {
             fn from(value: $from) -> Self {
                 Self {
-                    value: VariantUnion { $field: value},
+                    value: VariantUnion { $field: value.into() },
                     cb_elements: 0,
                     vt: $vt
                 }
@@ -322,12 +322,12 @@ macro_rules! variant_from {
 }
 
 variant_from!(bool, b_val, VariableType::VTYPE_BOOL);
-variant_from!(u8, ui8val, VariableType::VTYPE_UI1);
-variant_from!(u16, ushort_val, VariableType::VTYPE_UI2);
-variant_from!(u32, ul_val, VariableType::VTYPE_UI4);
+variant_from!(u8, ull_val, VariableType::VTYPE_UI1);
+variant_from!(u16, ull_val, VariableType::VTYPE_UI2);
+variant_from!(u32, ull_val, VariableType::VTYPE_UI4);
 variant_from!(u64, ull_val, VariableType::VTYPE_UI8);
-variant_from!(i8, i8val, VariableType::VTYPE_I1);
-variant_from!(i16, short_val, VariableType::VTYPE_I2);
-variant_from!(i32, l_val, VariableType::VTYPE_I4);
+variant_from!(i8, ll_val, VariableType::VTYPE_I1);
+variant_from!(i16, ll_val, VariableType::VTYPE_I2);
+variant_from!(i32, ll_val, VariableType::VTYPE_I4);
 variant_from!(i64, ll_val, VariableType::VTYPE_I8);
 variant_from!(f64, dbl_val, VariableType::VTYPE_R8);
