@@ -1,5 +1,5 @@
 [package]
-name = "test_macro"
+name = "simple_example"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,4 +7,4 @@ edition = "2021"
 crate-type = ["cdylib"]
 
 [dependencies]
-native-1c = { path = "./native_1c" }
+native-1c = { path = "../../" }
