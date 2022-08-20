@@ -1,6 +1,6 @@
 use proc_macro::TokenStream;
 use quote::quote;
-use syn::{ItemStruct, parse_macro_input};
+use syn::{ItemStruct, parse_macro_input, Visibility, VisPublic};
 use syn::parse::Parser;
 
 #[proc_macro_attribute]
@@ -12,6 +12,9 @@ pub fn native_object(_args: TokenStream, input: TokenStream) -> TokenStream {
 
     match &mut ast.fields {
         syn::Fields::Named(fields) => {
+            fields.named.iter_mut()
+                .for_each(|field| field.vis = Visibility::Public(VisPublic { pub_token: Default::default() }));
+
             fields.named
                 .insert(0, syn::Field::parse_named.parse2(quote! { inner: Inner }).unwrap());
         }
@@ -294,6 +297,7 @@ pub fn native_object(_args: TokenStream, input: TokenStream) -> TokenStream {
             use ::native_1c::types::*;
             use ::native_1c::Derivative;
             use ::native_1c::widestring;
+            use super::*;
 
             #[derive(Derivative)]
             #[derivative(Default)]

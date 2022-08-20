@@ -282,7 +282,7 @@ impl Variant {
 
     pub fn utf8_string<T: IComponentInit>(owner: &T, value: &str) -> Variant {
         Variant {
-            value: VariantUnion { pstr_val: (owner.mem_manager().copy_utf8_str(value) as *const i8, value.len() as u32 )},
+            value: VariantUnion { pstr_val: (owner.mem_manager().copy_utf8_str(value) as *const i8, value.chars().count() as u32 )},
             cb_elements: 0,
             vt: VariableType::VTYPE_PSTR
         }
@@ -290,7 +290,7 @@ impl Variant {
 
     pub fn utf16_string<T: IComponentInit>(owner: &T, value: &str) -> Variant {
         Variant {
-            value: VariantUnion { pwstr_val: (owner.mem_manager().copy_utf16_str(value), value.len() as u32 )},
+            value: VariantUnion { pwstr_val: (owner.mem_manager().copy_utf16_str(value), value.chars().count() as u32 )},
             cb_elements: 0,
             vt: VariableType::VTYPE_PWSTR
         }
