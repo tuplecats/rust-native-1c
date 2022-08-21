@@ -50,7 +50,7 @@ impl IMemoryManager {
             if !value.is_empty() {
                 std::ptr::copy(data_ptr, ptr, value.len() + 1);
             }
-            std::ptr::write(((ptr as c_long) + (value.len() as c_long)) as *mut u8, 0x00 as u8);
+            std::ptr::write(((ptr as usize) + value.len()) as *mut u8, 0x00 as u8);
         }
         ptr
     }
@@ -64,7 +64,7 @@ impl IMemoryManager {
             if !value.is_empty() {
                 std::ptr::copy(data_ptr, ptr, data.len() + 1);
             }
-            std::ptr::write(((ptr as c_long) + (data.len() as c_long) * 2) as *mut u16, 0x0000 as u16);
+            std::ptr::write(((ptr as usize) + data.len() * 2) as *mut u16, 0x0000 as u16);
         }
         ptr
     }
