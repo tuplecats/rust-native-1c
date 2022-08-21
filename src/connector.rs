@@ -5,7 +5,7 @@ use crate::memory::IMemoryManager;
 use crate::types::Variant;
 use crate::info::{AppInfo, IPlatformInfo};
 
-#[repr(u8)]
+#[repr(u32)]
 enum Interface {
     IMsgBox = 0,
     IPlatformInfo = 1,
