@@ -1,14 +1,15 @@
-use std::ffi::{c_void, c_long, c_ulong};
+use std::ffi::c_void;
 use std::ptr::NonNull;
+use std::os::raw::{c_long, c_ulong};
 
 
 #[repr(C)]
 pub struct IMemoryManagerVTable {
     #[cfg(target_os = "linux")]
     offset_linux: u64,
-    _drop: unsafe extern "stdcall" fn(&mut IMemoryManager),
-    _alloc_memory: unsafe extern "stdcall" fn(&mut IMemoryManager, *mut *const c_void, c_ulong) -> bool,
-    _free_memory: unsafe extern "stdcall" fn(&mut IMemoryManager, *mut *const c_void),
+    _drop: unsafe extern "system" fn(&mut IMemoryManager),
+    _alloc_memory: unsafe extern "system" fn(&mut IMemoryManager, *mut *const c_void, c_ulong) -> bool,
+    _free_memory: unsafe extern "system" fn(&mut IMemoryManager, *mut *const c_void),
 }
 
 pub struct IMemoryManager {

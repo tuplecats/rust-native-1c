@@ -1,4 +1,5 @@
-use std::ffi::{c_void, c_long};
+use std::os::raw::c_long;
+use std::ffi::c_void;
 use std::ptr::NonNull;
 use crate::memory::IMemoryManager;
 use crate::types::Variant;
@@ -8,42 +9,42 @@ use crate::connector::IConnector;
 pub struct IInitDoneBaseVTable<T> {
     #[cfg(target_os = "linux")]
     pub offset_linux: u64,
-    pub drop: unsafe extern "stdcall" fn(&mut T),
-    pub init: unsafe extern "stdcall" fn(&mut T, *mut c_void) -> bool,
-    pub set_mem_manager: unsafe extern "stdcall" fn(&mut T, *mut c_void) -> bool,
-    pub get_info: unsafe extern "stdcall" fn(&T) -> c_long,
-    pub done: unsafe extern "stdcall" fn(&mut T),
+    pub drop: unsafe extern "system" fn(&mut T),
+    pub init: unsafe extern "system" fn(&mut T, *mut c_void) -> bool,
+    pub set_mem_manager: unsafe extern "system" fn(&mut T, *mut c_void) -> bool,
+    pub get_info: unsafe extern "system" fn(&T) -> c_long,
+    pub done: unsafe extern "system" fn(&mut T),
 }
 
 #[repr(C)]
 pub struct ILanguageExtenderBaseVTable<T> {
     #[cfg(target_os = "linux")]
     pub offset_linux: u64,
-    pub drop: unsafe extern "stdcall" fn(&mut T),
-    pub register_extension_as: unsafe extern "stdcall" fn(&mut T, *mut *const u16) -> bool,
-    pub get_n_props: unsafe extern "stdcall" fn(&mut T) -> c_long,
-    pub find_prop: unsafe extern "stdcall" fn(&mut T, *const u16) -> c_long,
-    pub get_prop_name: unsafe extern "stdcall" fn(&T, c_long, c_long) -> *const u16,
-    pub get_prop_val: unsafe extern "stdcall" fn(&mut T, c_long, *mut Variant) -> bool,
-    pub set_prop_val: unsafe extern "stdcall" fn(&mut T, c_long, *mut Variant) -> bool,
-    pub is_prop_readable: unsafe extern "stdcall" fn(&mut T, c_long) -> bool,
-    pub is_prop_writeable: unsafe extern "stdcall" fn(&mut T, c_long) -> bool,
-    pub get_n_methods: unsafe extern "stdcall" fn(&mut T) -> c_long,
-    pub find_method: unsafe extern "stdcall" fn(&mut T, *const u16) -> c_long,
-    pub get_method_name: unsafe extern "stdcall" fn(&T, c_long, c_long) -> *const u16,
-    pub get_n_params: unsafe extern "stdcall" fn(&mut T, c_long) -> c_long,
-    pub get_param_def_value: unsafe extern "stdcall" fn(&mut T, c_long, c_long, *mut Variant) -> bool,
-    pub has_ret_val: unsafe extern "stdcall" fn(&mut T, c_long) -> bool,
-    pub call_as_proc: unsafe extern "stdcall" fn(&mut T, c_long, *mut Variant, c_long) -> bool,
-    pub call_as_func: unsafe extern "stdcall" fn(&mut T, c_long, *mut Variant, *mut Variant, c_long) -> bool,
+    pub drop: unsafe extern "system" fn(&mut T),
+    pub register_extension_as: unsafe extern "system" fn(&mut T, *mut *const u16) -> bool,
+    pub get_n_props: unsafe extern "system" fn(&mut T) -> c_long,
+    pub find_prop: unsafe extern "system" fn(&mut T, *const u16) -> c_long,
+    pub get_prop_name: unsafe extern "system" fn(&T, c_long, c_long) -> *const u16,
+    pub get_prop_val: unsafe extern "system" fn(&mut T, c_long, *mut Variant) -> bool,
+    pub set_prop_val: unsafe extern "system" fn(&mut T, c_long, *mut Variant) -> bool,
+    pub is_prop_readable: unsafe extern "system" fn(&mut T, c_long) -> bool,
+    pub is_prop_writeable: unsafe extern "system" fn(&mut T, c_long) -> bool,
+    pub get_n_methods: unsafe extern "system" fn(&mut T) -> c_long,
+    pub find_method: unsafe extern "system" fn(&mut T, *const u16) -> c_long,
+    pub get_method_name: unsafe extern "system" fn(&T, c_long, c_long) -> *const u16,
+    pub get_n_params: unsafe extern "system" fn(&mut T, c_long) -> c_long,
+    pub get_param_def_value: unsafe extern "system" fn(&mut T, c_long, c_long, *mut Variant) -> bool,
+    pub has_ret_val: unsafe extern "system" fn(&mut T, c_long) -> bool,
+    pub call_as_proc: unsafe extern "system" fn(&mut T, c_long, *mut Variant, c_long) -> bool,
+    pub call_as_func: unsafe extern "system" fn(&mut T, c_long, *mut Variant, *mut Variant, c_long) -> bool,
 }
 
 #[repr(C)]
 pub struct LocaleBaseVTable<T> {
     #[cfg(target_os = "linux")]
     pub offset_linux: u64,
-    pub drop: unsafe extern "stdcall" fn(&mut T),
-    pub set_locale: unsafe extern "stdcall" fn(&mut T, *const u16)
+    pub drop: unsafe extern "system" fn(&mut T),
+    pub set_locale: unsafe extern "system" fn(&mut T, *const u16)
 }
 
 #[repr(C)]

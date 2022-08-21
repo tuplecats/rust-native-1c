@@ -36,31 +36,31 @@ pub fn native_object(_args: TokenStream, input: TokenStream) -> TokenStream {
             #[cfg(target_os = "linux")]
             offset_linux: 0,
             drop: {
-                unsafe extern "stdcall" fn drop<T: IComponentBase>(_0: &mut T) {
+                unsafe extern "system" fn drop<T: IComponentBase>(_0: &mut T) {
 
                 }
                 drop::<#ident>
             },
             init: {
-                unsafe extern "stdcall" fn init<T: IComponentInit>(_0: &mut T, disp: *mut c_void) -> bool {
+                unsafe extern "system" fn init<T: IComponentInit>(_0: &mut T, disp: *mut c_void) -> bool {
                     _0._init(disp)
                 }
                 init::<#ident>
             },
             set_mem_manager: {
-                unsafe extern "stdcall" fn set_mem_manager<T: IComponentInit>(_0: &mut T, mem: *mut c_void) -> bool {
+                unsafe extern "system" fn set_mem_manager<T: IComponentInit>(_0: &mut T, mem: *mut c_void) -> bool {
                     _0.set_mem_manager(mem)
                 }
                 set_mem_manager::<#ident>
             },
             get_info: {
-                unsafe extern "stdcall" fn get_info<T: IComponentBase>(_0: &T) -> std::ffi::c_long {
+                unsafe extern "system" fn get_info<T: IComponentBase>(_0: &T) -> std::os::raw::c_long {
                     _0.get_info()
                 }
                 get_info::<#ident>
             },
             done: {
-                unsafe extern "stdcall" fn done<T: IComponentBase>(_0: &mut T) {
+                unsafe extern "system" fn done<T: IComponentBase>(_0: &mut T) {
                     _0.done();
                 }
                 done::<#ident>
@@ -72,119 +72,119 @@ pub fn native_object(_args: TokenStream, input: TokenStream) -> TokenStream {
             #[cfg(target_os = "linux")]
             offset_linux: 0,
             drop: {
-                unsafe extern "stdcall" fn drop<T: IComponentBase>(_0: &mut T) {
+                unsafe extern "system" fn drop<T: IComponentBase>(_0: &mut T) {
 
                 }
                 drop::<#ident>
             },
             register_extension_as: {
-                unsafe extern "stdcall" fn register_extension_as<T: IComponentInit>(_0: &mut T, name: *mut *const u16) -> bool {
-                    let _0 = &mut *((((_0 as *mut T) as *mut u8) as usize - std::mem::size_of::<std::ffi::c_long>()) as *mut T);
+                unsafe extern "system" fn register_extension_as<T: IComponentInit>(_0: &mut T, name: *mut *const u16) -> bool {
+                    let _0 = &mut *((((_0 as *mut T) as *mut u8) as usize - std::mem::size_of::<usize>()) as *mut T);
                     _0.register_extension_as(name)
                 }
                 register_extension_as::<#ident>
             },
             get_n_props: {
-                unsafe extern "stdcall" fn get_n_props<T: IComponentBase>(_0: &mut T) -> std::ffi::c_long {
-                    let _0 = &mut *((((_0 as *mut T) as *mut u8) as usize - std::mem::size_of::<std::ffi::c_long>()) as *mut T);
+                unsafe extern "system" fn get_n_props<T: IComponentBase>(_0: &mut T) -> std::os::raw::c_long {
+                    let _0 = &mut *((((_0 as *mut T) as *mut u8) as usize - std::mem::size_of::<usize>()) as *mut T);
                     _0.get_n_props()
                 }
                 get_n_props::<#ident>
             },
             find_prop: {
-                unsafe extern "stdcall" fn find_prop<T: IComponentBase>(_0: &mut T, name: *const u16) -> std::ffi::c_long {
-                    let _0 = &mut *((((_0 as *mut T) as *mut u8) as usize - std::mem::size_of::<std::ffi::c_long>()) as *mut T);
+                unsafe extern "system" fn find_prop<T: IComponentBase>(_0: &mut T, name: *const u16) -> std::os::raw::c_long {
+                    let _0 = &mut *((((_0 as *mut T) as *mut u8) as usize - std::mem::size_of::<usize>()) as *mut T);
                     let prop_name = unsafe { widestring::U16CStr::from_ptr_str(name).to_string().unwrap() };
                     _0.find_prop(prop_name.as_str())
                 }
                 find_prop::<#ident>
             },
             get_prop_name: {
-                unsafe extern "stdcall" fn get_prop_name<T: IComponentBase + IComponentInit>(_0: &T, num: std::ffi::c_long, alias: std::ffi::c_long) -> *const u16 {
-                    let _0 = &*((((_0 as *const T) as *const u8) as usize - std::mem::size_of::<std::ffi::c_long>()) as *const T);
+                unsafe extern "system" fn get_prop_name<T: IComponentBase + IComponentInit>(_0: &T, num: std::os::raw::c_long, alias: std::os::raw::c_long) -> *const u16 {
+                    let _0 = &*((((_0 as *const T) as *const u8) as usize - std::mem::size_of::<usize>()) as *const T);
                     let prop_name = _0.get_prop_name(num, alias);
                     _0.mem_manager().copy_utf16_str(prop_name)
                 }
                 get_prop_name::<#ident>
             },
             get_prop_val: {
-                unsafe extern "stdcall" fn get_prop_val<T: IComponentBase>(_0: &mut T, num: std::ffi::c_long, value: *mut Variant) -> bool {
-                    let _0 = &mut *((((_0 as *mut T) as *mut u8) as usize - std::mem::size_of::<std::ffi::c_long>()) as *mut T);
+                unsafe extern "system" fn get_prop_val<T: IComponentBase>(_0: &mut T, num: std::os::raw::c_long, value: *mut Variant) -> bool {
+                    let _0 = &mut *((((_0 as *mut T) as *mut u8) as usize - std::mem::size_of::<usize>()) as *mut T);
                     let value = &mut *value;
                     _0.get_prop_val(num, value)
                 }
                 get_prop_val::<#ident>
             },
             set_prop_val: {
-                unsafe extern "stdcall" fn set_prop_val<T: IComponentBase>(_0: &mut T, num: std::ffi::c_long, value: *mut Variant) -> bool {
-                    let _0 = &mut *((((_0 as *mut T) as *mut u8) as usize - std::mem::size_of::<std::ffi::c_long>()) as *mut T);
+                unsafe extern "system" fn set_prop_val<T: IComponentBase>(_0: &mut T, num: std::os::raw::c_long, value: *mut Variant) -> bool {
+                    let _0 = &mut *((((_0 as *mut T) as *mut u8) as usize - std::mem::size_of::<usize>()) as *mut T);
                     let value = &*value;
                     _0.set_prop_val(num, value)
                 }
                 set_prop_val::<#ident>
             },
             is_prop_readable: {
-                unsafe extern "stdcall" fn is_prop_readable<T: IComponentBase>(_0: &mut T, num: std::ffi::c_long) -> bool {
-                    let _0 = &mut *((((_0 as *mut T) as *mut u8) as usize - std::mem::size_of::<std::ffi::c_long>()) as *mut T);
+                unsafe extern "system" fn is_prop_readable<T: IComponentBase>(_0: &mut T, num: std::os::raw::c_long) -> bool {
+                    let _0 = &mut *((((_0 as *mut T) as *mut u8) as usize - std::mem::size_of::<usize>()) as *mut T);
                     _0.is_prop_readable(num)
                 }
                 is_prop_readable::<#ident>
             },
             is_prop_writeable: {
-                unsafe extern "stdcall" fn is_prop_writeable<T: IComponentBase>(_0: &mut T, num: std::ffi::c_long) -> bool {
-                    let _0 = &mut *((((_0 as *mut T) as *mut u8) as usize - std::mem::size_of::<std::ffi::c_long>()) as *mut T);
+                unsafe extern "system" fn is_prop_writeable<T: IComponentBase>(_0: &mut T, num: std::os::raw::c_long) -> bool {
+                    let _0 = &mut *((((_0 as *mut T) as *mut u8) as usize - std::mem::size_of::<usize>()) as *mut T);
                     _0.is_prop_writeable(num)
                 }
                 is_prop_writeable::<#ident>
             },
             get_n_methods: {
-                unsafe extern "stdcall" fn get_n_methods<T: IComponentBase>(_0: &mut T) -> std::ffi::c_long {
-                    let _0 = &mut *((((_0 as *mut T) as *mut u8) as usize - std::mem::size_of::<std::ffi::c_long>()) as *mut T);
+                unsafe extern "system" fn get_n_methods<T: IComponentBase>(_0: &mut T) -> std::os::raw::c_long {
+                    let _0 = &mut *((((_0 as *mut T) as *mut u8) as usize - std::mem::size_of::<usize>()) as *mut T);
                     _0.get_n_methods()
                 }
                 get_n_methods::<#ident>
             },
             find_method: {
-                unsafe extern "stdcall" fn find_method<T: IComponentBase>(_0: &mut T, name: *const u16) -> std::ffi::c_long {
-                    let _0 = &mut *((((_0 as *mut T) as *mut u8) as usize - std::mem::size_of::<std::ffi::c_long>()) as *mut T);
+                unsafe extern "system" fn find_method<T: IComponentBase>(_0: &mut T, name: *const u16) -> std::os::raw::c_long {
+                    let _0 = &mut *((((_0 as *mut T) as *mut u8) as usize - std::mem::size_of::<usize>()) as *mut T);
                     let method_name = unsafe { widestring::U16CStr::from_ptr_str(name).to_string().unwrap() };
                     _0.find_method(method_name.as_str())
                 }
                 find_method::<#ident>
             },
             get_method_name: {
-                unsafe extern "stdcall" fn get_method_name<T: IComponentBase + IComponentInit>(_0: &T, num: std::ffi::c_long, alias: std::ffi::c_long) -> *const u16 {
-                    let _0 = &*((((_0 as *const T) as *const u8) as usize - std::mem::size_of::<std::ffi::c_long>()) as *const T);
+                unsafe extern "system" fn get_method_name<T: IComponentBase + IComponentInit>(_0: &T, num: std::os::raw::c_long, alias: std::os::raw::c_long) -> *const u16 {
+                    let _0 = &*((((_0 as *const T) as *const u8) as usize - std::mem::size_of::<usize>()) as *const T);
                     let method_name = _0.get_method_name(num, alias);
                     _0.mem_manager().copy_utf16_str(method_name)
                 }
                 get_method_name::<#ident>
             },
             get_n_params: {
-                unsafe extern "stdcall" fn get_n_params<T: IComponentBase>(_0: &mut T, num: std::ffi::c_long) -> std::ffi::c_long {
-                    let _0 = &mut *((((_0 as *mut T) as *mut u8) as usize - std::mem::size_of::<std::ffi::c_long>()) as *mut T);
+                unsafe extern "system" fn get_n_params<T: IComponentBase>(_0: &mut T, num: std::os::raw::c_long) -> std::os::raw::c_long {
+                    let _0 = &mut *((((_0 as *mut T) as *mut u8) as usize - std::mem::size_of::<usize>()) as *mut T);
                     _0.get_n_params(num)
                 }
                 get_n_params::<#ident>
             },
             get_param_def_value: {
-                unsafe extern "stdcall" fn get_param_def_value<T: IComponentBase>(_0: &mut T, num: std::ffi::c_long, param_num: std::ffi::c_long, value: *mut Variant) -> bool {
-                    let _0 = &mut *((((_0 as *mut T) as *mut u8) as usize - std::mem::size_of::<std::ffi::c_long>()) as *mut T);
+                unsafe extern "system" fn get_param_def_value<T: IComponentBase>(_0: &mut T, num: std::os::raw::c_long, param_num: std::os::raw::c_long, value: *mut Variant) -> bool {
+                    let _0 = &mut *((((_0 as *mut T) as *mut u8) as usize - std::mem::size_of::<usize>()) as *mut T);
                     let value = &mut *value;
                     _0.get_param_def_value(num, param_num, value)
                 }
                 get_param_def_value::<#ident>
             },
             has_ret_val: {
-                unsafe extern "stdcall" fn has_ret_val<T: IComponentBase>(_0: &mut T, num: std::ffi::c_long) -> bool {
-                    let _0 = &mut *((((_0 as *mut T) as *mut u8) as usize - std::mem::size_of::<std::ffi::c_long>()) as *mut T);
+                unsafe extern "system" fn has_ret_val<T: IComponentBase>(_0: &mut T, num: std::os::raw::c_long) -> bool {
+                    let _0 = &mut *((((_0 as *mut T) as *mut u8) as usize - std::mem::size_of::<usize>()) as *mut T);
                     _0.has_ret_val(num)
                 }
                 has_ret_val::<#ident>
             },
             call_as_proc: {
-                unsafe extern "stdcall" fn call_as_proc<T: IComponentBase>(_0: &mut T, num: std::ffi::c_long, params: *mut Variant, size: std::ffi::c_long) -> bool {
-                    let _0 = &mut *((((_0 as *mut T) as *mut u8) as usize - std::mem::size_of::<std::ffi::c_long>()) as *mut T);
+                unsafe extern "system" fn call_as_proc<T: IComponentBase>(_0: &mut T, num: std::os::raw::c_long, params: *mut Variant, size: std::os::raw::c_long) -> bool {
+                    let _0 = &mut *((((_0 as *mut T) as *mut u8) as usize - std::mem::size_of::<usize>()) as *mut T);
                     let params = match params.is_null() {
                         true => None,
                         false => Some(std::slice::from_raw_parts_mut(params, size as usize))
@@ -194,8 +194,8 @@ pub fn native_object(_args: TokenStream, input: TokenStream) -> TokenStream {
                 call_as_proc::<#ident>
             },
             call_as_func: {
-                unsafe extern "stdcall" fn call_as_func<T: IComponentBase>(_0: &mut T, num: std::ffi::c_long, ret: *mut Variant, params: *mut Variant, size: std::ffi::c_long) -> bool {
-                    let _0 = &mut *((((_0 as *mut T) as *mut u8) as usize - std::mem::size_of::<std::ffi::c_long>()) as *mut T);
+                unsafe extern "system" fn call_as_func<T: IComponentBase>(_0: &mut T, num: std::os::raw::c_long, ret: *mut Variant, params: *mut Variant, size: std::os::raw::c_long) -> bool {
+                    let _0 = &mut *((((_0 as *mut T) as *mut u8) as usize - std::mem::size_of::<usize>()) as *mut T);
                     let params = match params.is_null() {
                         true => None,
                         false => Some(std::slice::from_raw_parts_mut(params, size as usize))
@@ -213,14 +213,14 @@ pub fn native_object(_args: TokenStream, input: TokenStream) -> TokenStream {
             #[cfg(target_os = "linux")]
             offset_linux: 0,
             drop: {
-                unsafe extern "stdcall" fn drop<T: IComponentBase>(_0: &mut T) {
+                unsafe extern "system" fn drop<T: IComponentBase>(_0: &mut T) {
 
                 }
                 drop::<#ident>
             },
             set_locale: {
-                unsafe extern "stdcall" fn set_locale<T: IComponentBase>(_0: &mut T, loc: *const u16) {
-                    let _0 = &mut *((((_0 as *mut T) as *mut u8) as usize - std::mem::size_of::<std::ffi::c_long>()*2) as *mut T);
+                unsafe extern "system" fn set_locale<T: IComponentBase>(_0: &mut T, loc: *const u16) {
+                    let _0 = &mut *((((_0 as *mut T) as *mut u8) as usize - std::mem::size_of::<usize>()*2) as *mut T);
                     let locale = unsafe { widestring::U16CStr::from_ptr_str(loc).to_string().unwrap() };
                     _0.set_locale(locale.as_str());
                 }
