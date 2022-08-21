@@ -1,4 +1,4 @@
-use std::ffi::c_void;
+use std::ffi::{c_void, c_long, c_ulong};
 use std::ptr::NonNull;
 
 
@@ -6,9 +6,9 @@ use std::ptr::NonNull;
 pub struct IMemoryManagerVTable {
     #[cfg(target_os = "linux")]
     offset_linux: u64,
-    _drop: unsafe extern "C" fn(&mut IMemoryManager),
-    _alloc_memory: unsafe extern "C" fn(&mut IMemoryManager, *mut *const c_void, usize) -> bool,
-    _free_memory: unsafe extern "C" fn(&mut IMemoryManager, *mut *const c_void),
+    _drop: unsafe extern "stdcall" fn(&mut IMemoryManager),
+    _alloc_memory: unsafe extern "stdcall" fn(&mut IMemoryManager, *mut *const c_void, c_ulong) -> bool,
+    _free_memory: unsafe extern "stdcall" fn(&mut IMemoryManager, *mut *const c_void),
 }
 
 pub struct IMemoryManager {
@@ -16,7 +16,7 @@ pub struct IMemoryManager {
 }
 
 impl IMemoryManager {
-    pub fn alloc_memory(&mut self, ptr: *mut *const c_void, size: usize) -> bool {
+    pub fn alloc_memory(&mut self, ptr: *mut *const c_void, size: c_ulong) -> bool {
         unsafe {
             (self.vtable.as_mut()._alloc_memory)(self, ptr, size)
         }
@@ -32,7 +32,7 @@ impl IMemoryManager {
         let mut ptr = std::ptr::null_mut();
         let data_ptr = value.as_ptr() as *const u8;
         let size = value.len() * std::mem::size_of::<T>();
-        self.alloc_memory((&mut ptr as *mut *mut u8) as *mut *const c_void, size);
+        self.alloc_memory((&mut ptr as *mut *mut u8) as *mut *const c_void, size as c_ulong);
         unsafe {
             if !value.is_empty() {
                 std::ptr::copy(data_ptr, ptr, size);
@@ -44,12 +44,12 @@ impl IMemoryManager {
     pub fn copy_utf8_str(&mut self, value: &str) -> *const u8 {
         let mut ptr = std::ptr::null_mut();
         let data_ptr = value.as_ptr();
-        self.alloc_memory((&mut ptr as *mut *mut u8) as *mut *const c_void, value.len() + 1);
+        self.alloc_memory((&mut ptr as *mut *mut u8) as *mut *const c_void, (value.len() as c_ulong) + 1);
         unsafe {
             if !value.is_empty() {
                 std::ptr::copy(data_ptr, ptr, value.len() + 1);
             }
-            std::ptr::write(((ptr as usize) + value.len()) as *mut u8, 0x00 as u8);
+            std::ptr::write(((ptr as c_long) + (value.len() as c_long)) as *mut u8, 0x00 as u8);
         }
         ptr
     }
@@ -58,12 +58,12 @@ impl IMemoryManager {
         let data = value.encode_utf16().collect::<Vec<u16>>();
         let data_ptr = data.as_ptr();
         let mut ptr = std::ptr::null_mut();
-        self.alloc_memory((&mut ptr as *mut *mut u16) as *mut *const c_void, data.len() * 2 + 2);
+        self.alloc_memory((&mut ptr as *mut *mut u16) as *mut *const c_void, (data.len() as c_ulong) * 2 + 2);
         unsafe {
             if !value.is_empty() {
                 std::ptr::copy(data_ptr, ptr, data.len() + 1);
             }
-            std::ptr::write(((ptr as usize) + data.len() * 2) as *mut u16, 0x0000 as u16);
+            std::ptr::write(((ptr as c_long) + (data.len() as c_long) * 2) as *mut u16, 0x0000 as u16);
         }
         ptr
     }
