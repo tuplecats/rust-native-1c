@@ -15,17 +15,17 @@ impl IComponentBase for TestAddIn {
         true
     }
 
-    fn get_info(&self) -> i64 {
+    fn get_info(&self) -> i32 {
         1000
     }
 
     fn done(&mut self) {}
 
-    fn get_n_props(&self) -> i64 {
+    fn get_n_props(&self) -> i32 {
         2
     }
 
-    fn find_prop(&self, prop_name: &str) -> i64 {
+    fn find_prop(&self, prop_name: &str) -> i32 {
         match prop_name {
             "ТестовоеСвойство" | "TestProp" => 0,
             "СтроковоеСвойство" | "StringProp" => 1,
@@ -33,7 +33,7 @@ impl IComponentBase for TestAddIn {
         }
     }
 
-    fn get_prop_name(&self, prop_num: i64, prop_alias: i64) -> &str {
+    fn get_prop_name(&self, prop_num: i32, prop_alias: i32) -> &str {
         match prop_num {
             0 => {
                 if prop_alias == 0 {
@@ -53,7 +53,7 @@ impl IComponentBase for TestAddIn {
         }
     }
 
-    fn get_prop_val(&self, prop_num: i64, var_prop_val: &mut Variant) -> bool {
+    fn get_prop_val(&self, prop_num: i32, var_prop_val: &mut Variant) -> bool {
         match prop_num {
             0 => {
                 *var_prop_val = Variant::from(self.num_prop);
@@ -66,7 +66,7 @@ impl IComponentBase for TestAddIn {
         true
     }
 
-    fn set_prop_val(&mut self, prop_num: i64, var_prop_val: &Variant) -> bool {
+    fn set_prop_val(&mut self, prop_num: i32, var_prop_val: &Variant) -> bool {
         match prop_num {
             0 => match var_prop_val.as_i32() {
                 Some(value) => self.num_prop = value,
@@ -80,26 +80,26 @@ impl IComponentBase for TestAddIn {
         }
         true
     }
-    fn is_prop_readable(&self, _prop_num: i64) -> bool {
+    fn is_prop_readable(&self, _prop_num: i32) -> bool {
         true
     }
 
-    fn is_prop_writeable(&self, _prop_num: i64) -> bool {
+    fn is_prop_writeable(&self, _prop_num: i32) -> bool {
         true
     }
 
-    fn get_n_methods(&self) -> i64 {
+    fn get_n_methods(&self) -> i32 {
         2
     }
 
-    fn find_method(&self, method_name: &str) -> i64 {
+    fn find_method(&self, method_name: &str) -> i32 {
         match method_name {
             "ИнформацияОСистеме" | "SystemInfo" => 0,
             "ПоказатьОкноСИнформацией" | "ShowInfoWindow" => 1,
             _ => unreachable!(),
         }
     }
-    fn get_method_name(&self, method_num: i64, method_alias: i64) -> &str {
+    fn get_method_name(&self, method_num: i32, method_alias: i32) -> &str {
         match method_num {
             0 => {
                 if method_alias == 0 {
@@ -118,7 +118,7 @@ impl IComponentBase for TestAddIn {
             _ => unreachable!(),
         }
     }
-    fn get_n_params(&self, method_num: i64) -> i64 {
+    fn get_n_params(&self, method_num: i32) -> i32 {
         match method_num {
             0 => 3,
             1 => 1,
@@ -127,8 +127,8 @@ impl IComponentBase for TestAddIn {
     }
     fn get_param_def_value(
         &self,
-        method_num: i64,
-        param_num: i64,
+        method_num: i32,
+        param_num: i32,
         var_param_def_value: &mut Variant,
     ) -> bool {
         match method_num {
@@ -139,17 +139,17 @@ impl IComponentBase for TestAddIn {
         }
         true
     }
-    fn has_ret_val(&self, _method_num: i64) -> bool {
+    fn has_ret_val(&self, _method_num: i32) -> bool {
         true
     }
 
-    fn call_as_proc(&mut self, _method_num: i64, _params: Option<&mut [Variant]>) -> bool {
+    fn call_as_proc(&mut self, _method_num: i32, _params: Option<&mut [Variant]>) -> bool {
         true
     }
 
     fn call_as_func(
         &mut self,
-        method_num: i64,
+        method_num: i32,
         ret_vals: &mut Variant,
         params: Option<&mut [Variant]>,
     ) -> bool {
