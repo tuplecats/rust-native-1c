@@ -1,3 +1,5 @@
+use std::os::raw::{c_long, c_float, c_double};
+
 use libc::{tm, c_char};
 use crate::component::IComponentInit;
 
@@ -49,9 +51,9 @@ pub union VariantUnion {
     ul_val: u32,
     ull_val: u64,
     err_code: i32,
-    h_res: i64,
-    flt_val: f64,
-    dbl_val: f64,
+    h_res: c_long,
+    flt_val: c_float,
+    dbl_val: c_double,
     b_val: bool,
     ch_val: i8,
     wch_val: u16,
@@ -325,9 +327,15 @@ variant_from!(bool, b_val, VariableType::VTYPE_BOOL);
 variant_from!(u8, ull_val, VariableType::VTYPE_UI1);
 variant_from!(u16, ull_val, VariableType::VTYPE_UI2);
 variant_from!(u32, ull_val, VariableType::VTYPE_UI4);
+#[cfg(target_arch = "x86_64")]
 variant_from!(u64, ull_val, VariableType::VTYPE_UI8);
+#[cfg(target_arch = "x86")]
+variant_from!(u64, ull_val, VariableType::VTYPE_UI4);
 variant_from!(i8, ll_val, VariableType::VTYPE_I1);
 variant_from!(i16, ll_val, VariableType::VTYPE_I2);
 variant_from!(i32, ll_val, VariableType::VTYPE_I4);
+#[cfg(target_arch = "x86_64")]
 variant_from!(i64, ll_val, VariableType::VTYPE_I8);
+#[cfg(target_arch = "x86")]
+variant_from!(i64, ll_val, VariableType::VTYPE_I4);
 variant_from!(f64, dbl_val, VariableType::VTYPE_R8);
