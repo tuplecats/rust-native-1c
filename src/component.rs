@@ -101,7 +101,7 @@ pub trait IComponentBase {
 }
 
 #[allow(non_camel_case_types)]
-#[repr(i8)]
+#[repr(i32)]
 pub enum AppCapabilities {
     #[allow(unused)] eAppCapabilitiesInvalid = -1,
     #[allow(unused)] eAppCapabilities1 = 1,
