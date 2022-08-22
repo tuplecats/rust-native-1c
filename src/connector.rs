@@ -117,7 +117,7 @@ impl IConnector {
 
         let mut ret= Variant::empty();
         let text = manager.copy_utf16_str(text);
-        let interface = unsafe { &mut *(interface as *mut IMessageBox) };
+        let interface = unsafe { &mut *(((interface as usize) - std::mem::size_of::<usize>()) as *mut IMessageBox) };
         let result = unsafe { (interface.vtable.as_mut().confirm)(interface, text, &mut ret as *mut Variant) };
         if result {
             Ok(ret)
