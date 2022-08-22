@@ -1,6 +1,6 @@
 use std::ffi::c_void;
 use std::ptr::NonNull;
-use std::os::raw::{c_long, c_ulong};
+use std::os::raw::c_ulong;
 
 
 #[repr(C)]

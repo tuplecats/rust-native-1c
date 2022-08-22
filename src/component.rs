@@ -76,25 +76,25 @@ pub trait IComponentInit where Self: IComponentBase {
 pub trait IComponentBase {
     // IInitDoneBaseVTable
     fn init(&mut self) -> bool;
-    fn get_info(&self) -> c_long;
+    fn get_info(&self) -> i32;
     fn done(&mut self);
 
     // ILanguageExtenderBaseVTable
-    fn get_n_props(&self) -> c_long;
-    fn find_prop(&self, prop_name: &str) -> c_long;
-    fn get_prop_name(&self, prop_num: c_long, prop_alias: c_long) -> &str;
-    fn get_prop_val(&self, prop_num: c_long, var_prop_val: &mut Variant) -> bool;
-    fn set_prop_val(&mut self, prop_num: c_long, var_prop_val: &Variant) -> bool;
-    fn is_prop_readable(&self, prop_num: c_long) -> bool;
-    fn is_prop_writeable(&self, prop_num: c_long) -> bool;
-    fn get_n_methods(&self) -> c_long;
-    fn find_method(&self, method_name: &str) -> c_long;
-    fn get_method_name(&self, method_num: c_long, method_alias: c_long) -> &str;
-    fn get_n_params(&self, method_num: c_long) -> c_long;
-    fn get_param_def_value(&self, method_num: c_long, param_num: c_long, var_param_def_value: &mut Variant) -> bool;
-    fn has_ret_val(&self, method_num: c_long) -> bool;
-    fn call_as_proc(&mut self, method_num: c_long, params: Option<&mut [Variant]>) -> bool;
-    fn call_as_func(&mut self, method_num: c_long, ret_vals: &mut Variant, params: Option<&mut [Variant]>) -> bool;
+    fn get_n_props(&self) -> i32;
+    fn find_prop(&self, prop_name: &str) -> i32;
+    fn get_prop_name(&self, prop_num: i32, prop_alias: i32) -> &str;
+    fn get_prop_val(&self, prop_num: i32, var_prop_val: &mut Variant) -> bool;
+    fn set_prop_val(&mut self, prop_num: i32, var_prop_val: &Variant) -> bool;
+    fn is_prop_readable(&self, prop_num: i32) -> bool;
+    fn is_prop_writeable(&self, prop_num: i32) -> bool;
+    fn get_n_methods(&self) -> i32;
+    fn find_method(&self, method_name: &str) -> i32;
+    fn get_method_name(&self, method_num: i32, method_alias: i32) -> &str;
+    fn get_n_params(&self, method_num: i32) -> i32;
+    fn get_param_def_value(&self, method_num: i32, param_num: i32, var_param_def_value: &mut Variant) -> bool;
+    fn has_ret_val(&self, method_num: i32) -> bool;
+    fn call_as_proc(&mut self, method_num: i32, params: Option<&mut [Variant]>) -> bool;
+    fn call_as_func(&mut self, method_num: i32, ret_vals: &mut Variant, params: Option<&mut [Variant]>) -> bool;
 
     // LocaleBaseVTable
     fn set_locale(&mut self, loc: &str);
