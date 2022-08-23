@@ -55,7 +55,7 @@ pub fn native_object(_args: TokenStream, input: TokenStream) -> TokenStream {
             },
             get_info: {
                 unsafe extern "system" fn get_info<T: IComponentBase>(_0: &T) -> std::os::raw::c_long {
-                    _0.get_info()
+                    _0.get_info() as std::os::raw::c_long
                 }
                 get_info::<#ident>
             },
@@ -87,7 +87,7 @@ pub fn native_object(_args: TokenStream, input: TokenStream) -> TokenStream {
             get_n_props: {
                 unsafe extern "system" fn get_n_props<T: IComponentBase>(_0: &mut T) -> std::os::raw::c_long {
                     let _0 = &mut *((((_0 as *mut T) as *mut u8) as usize - std::mem::size_of::<usize>()) as *mut T);
-                    _0.get_n_props()
+                    _0.get_n_props() as std::os::raw::c_long
                 }
                 get_n_props::<#ident>
             },
@@ -95,14 +95,14 @@ pub fn native_object(_args: TokenStream, input: TokenStream) -> TokenStream {
                 unsafe extern "system" fn find_prop<T: IComponentBase>(_0: &mut T, name: *const u16) -> std::os::raw::c_long {
                     let _0 = &mut *((((_0 as *mut T) as *mut u8) as usize - std::mem::size_of::<usize>()) as *mut T);
                     let prop_name = unsafe { widestring::U16CStr::from_ptr_str(name).to_string().unwrap() };
-                    _0.find_prop(prop_name.as_str())
+                    _0.find_prop(prop_name.as_str()) as std::os::raw::c_long
                 }
                 find_prop::<#ident>
             },
             get_prop_name: {
                 unsafe extern "system" fn get_prop_name<T: IComponentBase + IComponentInit>(_0: &T, num: std::os::raw::c_long, alias: std::os::raw::c_long) -> *const u16 {
                     let _0 = &*((((_0 as *const T) as *const u8) as usize - std::mem::size_of::<usize>()) as *const T);
-                    let prop_name = _0.get_prop_name(num, alias);
+                    let prop_name = _0.get_prop_name(num as i32, alias as i32);
                     _0.mem_manager().copy_utf16_str(prop_name)
                 }
                 get_prop_name::<#ident>
@@ -111,7 +111,7 @@ pub fn native_object(_args: TokenStream, input: TokenStream) -> TokenStream {
                 unsafe extern "system" fn get_prop_val<T: IComponentBase>(_0: &mut T, num: std::os::raw::c_long, value: *mut Variant) -> bool {
                     let _0 = &mut *((((_0 as *mut T) as *mut u8) as usize - std::mem::size_of::<usize>()) as *mut T);
                     let value = &mut *value;
-                    _0.get_prop_val(num, value)
+                    _0.get_prop_val(num as i32, value)
                 }
                 get_prop_val::<#ident>
             },
@@ -119,28 +119,28 @@ pub fn native_object(_args: TokenStream, input: TokenStream) -> TokenStream {
                 unsafe extern "system" fn set_prop_val<T: IComponentBase>(_0: &mut T, num: std::os::raw::c_long, value: *mut Variant) -> bool {
                     let _0 = &mut *((((_0 as *mut T) as *mut u8) as usize - std::mem::size_of::<usize>()) as *mut T);
                     let value = &*value;
-                    _0.set_prop_val(num, value)
+                    _0.set_prop_val(num as i32, value)
                 }
                 set_prop_val::<#ident>
             },
             is_prop_readable: {
                 unsafe extern "system" fn is_prop_readable<T: IComponentBase>(_0: &mut T, num: std::os::raw::c_long) -> bool {
                     let _0 = &mut *((((_0 as *mut T) as *mut u8) as usize - std::mem::size_of::<usize>()) as *mut T);
-                    _0.is_prop_readable(num)
+                    _0.is_prop_readable(num as i32)
                 }
                 is_prop_readable::<#ident>
             },
             is_prop_writeable: {
                 unsafe extern "system" fn is_prop_writeable<T: IComponentBase>(_0: &mut T, num: std::os::raw::c_long) -> bool {
                     let _0 = &mut *((((_0 as *mut T) as *mut u8) as usize - std::mem::size_of::<usize>()) as *mut T);
-                    _0.is_prop_writeable(num)
+                    _0.is_prop_writeable(num as i32)
                 }
                 is_prop_writeable::<#ident>
             },
             get_n_methods: {
                 unsafe extern "system" fn get_n_methods<T: IComponentBase>(_0: &mut T) -> std::os::raw::c_long {
                     let _0 = &mut *((((_0 as *mut T) as *mut u8) as usize - std::mem::size_of::<usize>()) as *mut T);
-                    _0.get_n_methods()
+                    _0.get_n_methods() as std::os::raw::c_long
                 }
                 get_n_methods::<#ident>
             },
@@ -148,14 +148,14 @@ pub fn native_object(_args: TokenStream, input: TokenStream) -> TokenStream {
                 unsafe extern "system" fn find_method<T: IComponentBase>(_0: &mut T, name: *const u16) -> std::os::raw::c_long {
                     let _0 = &mut *((((_0 as *mut T) as *mut u8) as usize - std::mem::size_of::<usize>()) as *mut T);
                     let method_name = unsafe { widestring::U16CStr::from_ptr_str(name).to_string().unwrap() };
-                    _0.find_method(method_name.as_str())
+                    _0.find_method(method_name.as_str()) as std::os::raw::c_long
                 }
                 find_method::<#ident>
             },
             get_method_name: {
                 unsafe extern "system" fn get_method_name<T: IComponentBase + IComponentInit>(_0: &T, num: std::os::raw::c_long, alias: std::os::raw::c_long) -> *const u16 {
                     let _0 = &*((((_0 as *const T) as *const u8) as usize - std::mem::size_of::<usize>()) as *const T);
-                    let method_name = _0.get_method_name(num, alias);
+                    let method_name = _0.get_method_name(num as i32, alias as i32);
                     _0.mem_manager().copy_utf16_str(method_name)
                 }
                 get_method_name::<#ident>
@@ -163,7 +163,7 @@ pub fn native_object(_args: TokenStream, input: TokenStream) -> TokenStream {
             get_n_params: {
                 unsafe extern "system" fn get_n_params<T: IComponentBase>(_0: &mut T, num: std::os::raw::c_long) -> std::os::raw::c_long {
                     let _0 = &mut *((((_0 as *mut T) as *mut u8) as usize - std::mem::size_of::<usize>()) as *mut T);
-                    _0.get_n_params(num)
+                    _0.get_n_params(num as i32) as std::os::raw::c_long
                 }
                 get_n_params::<#ident>
             },
@@ -171,14 +171,14 @@ pub fn native_object(_args: TokenStream, input: TokenStream) -> TokenStream {
                 unsafe extern "system" fn get_param_def_value<T: IComponentBase>(_0: &mut T, num: std::os::raw::c_long, param_num: std::os::raw::c_long, value: *mut Variant) -> bool {
                     let _0 = &mut *((((_0 as *mut T) as *mut u8) as usize - std::mem::size_of::<usize>()) as *mut T);
                     let value = &mut *value;
-                    _0.get_param_def_value(num, param_num, value)
+                    _0.get_param_def_value(num as i32, param_num as i32, value)
                 }
                 get_param_def_value::<#ident>
             },
             has_ret_val: {
                 unsafe extern "system" fn has_ret_val<T: IComponentBase>(_0: &mut T, num: std::os::raw::c_long) -> bool {
                     let _0 = &mut *((((_0 as *mut T) as *mut u8) as usize - std::mem::size_of::<usize>()) as *mut T);
-                    _0.has_ret_val(num)
+                    _0.has_ret_val(num as i32)
                 }
                 has_ret_val::<#ident>
             },
@@ -189,7 +189,7 @@ pub fn native_object(_args: TokenStream, input: TokenStream) -> TokenStream {
                         true => None,
                         false => Some(std::slice::from_raw_parts_mut(params, size as usize))
                     };
-                    _0.call_as_proc(num, params)
+                    _0.call_as_proc(num as i32, params)
                 }
                 call_as_proc::<#ident>
             },
@@ -202,7 +202,7 @@ pub fn native_object(_args: TokenStream, input: TokenStream) -> TokenStream {
                     };
                     let ret = &mut *ret;
 
-                    _0.call_as_func(num, ret, params)
+                    _0.call_as_func(num as i32, ret, params)
                 }
                 call_as_func::<#ident>
             }
