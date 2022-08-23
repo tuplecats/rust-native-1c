@@ -1,4 +1,5 @@
 #![feature(let_else)]
+use std::os::raw::c_long;
 use native_1c::OnceCell;
 use native_1c::component::AppCapabilities;
 use native_1c::widestring::{U16CStr, U16CString};
@@ -9,17 +10,17 @@ mod addin_test;
 static CLASS_NAMES: OnceCell<Vec<u16>> = OnceCell::new();
 
 #[no_mangle]
-unsafe extern "C" fn GetClassObject(_name: *const u16, component: *mut *const u8) -> usize {
+unsafe extern "C" fn GetClassObject(_name: *const u16, component: *mut *const u8) -> c_long {
     let Ok(name) = U16CStr::from_ptr_str(_name).to_string() else { return 0 };
     *component = match name.as_str() {
         "TestAddIn" => Box::into_raw(Box::new(TestAddIn::new())) as *const u8,
         _ => return 0
     };
-    component as usize
+    component as c_long
 }
 
 #[no_mangle]
-unsafe extern "C" fn DestroyObject(_component: *mut *const u8) -> usize {
+unsafe extern "C" fn DestroyObject(_component: *mut *const u8) -> c_long {
     0
 }
 

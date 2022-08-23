@@ -3,7 +3,7 @@ use widestring::U16CStr;
 
 #[repr(C)]
 pub(crate) struct PlatformInfoVTable {
-    pub(crate) get_platform_info: unsafe extern "C" fn(&IPlatformInfo) -> *const AppInfoInner,
+    pub(crate) get_platform_info: unsafe extern "stdcall" fn(&IPlatformInfo) -> *const AppInfoInner,
 }
 
 #[repr(C)]

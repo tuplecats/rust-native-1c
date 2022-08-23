@@ -1,3 +1,4 @@
+use std::os::raw::c_long;
 use std::ffi::c_void;
 use std::ptr::NonNull;
 use widestring::U16CStr;
@@ -13,8 +14,8 @@ enum Interface {
 
 #[repr(C)]
 struct IMessageBoxVTable {
-    confirm: unsafe extern "C" fn(&IMessageBox, *const u16, *mut Variant) -> bool,
-    alert: unsafe extern "C" fn(&IMessageBox, *const u16) -> bool,
+    confirm: unsafe extern "system" fn(&IMessageBox, *const u16, *mut Variant) -> bool,
+    alert: unsafe extern "system" fn(&IMessageBox, *const u16) -> bool,
 }
 
 #[repr(C)]
@@ -26,18 +27,18 @@ struct IMessageBox {
 struct IConnectorVTable {
     #[cfg(target_os = "linux")]
     pub offset_linux: u64,
-    _drop: unsafe extern "C" fn(&mut IConnector),
-    add_error: unsafe extern "C" fn(&mut IConnector, u16, *const u16, *const u16, i64) -> bool,
-    read: unsafe extern "C" fn(&mut IConnector, *const u16, *const Variant, *mut u64, *const *const u16) -> bool,
-    write: unsafe extern "C" fn(&mut IConnector, *const u16, *const Variant) -> bool,
-    register_profile_as: unsafe extern "C" fn(&mut IConnector, *const u16) -> bool,
-    set_event_buffer_depths: unsafe extern "C" fn(&mut IConnector, u64) -> bool,
-    get_event_buffer_depths: unsafe extern "C" fn(&mut IConnector) -> u64,
-    external_event: unsafe extern "C" fn(&mut IConnector, *const u16, *const u16, *const u16) -> bool,
-    clean_event_buffer: unsafe extern "C" fn(&mut IConnector),
-    set_status_line: unsafe extern "C" fn(&mut IConnector, *const u16) -> bool,
-    reset_status_line: unsafe extern "C" fn(&mut IConnector),
-    get_interface: unsafe extern "C" fn(&IConnector, Interface) -> *const c_void,
+    _drop: unsafe extern "system" fn(&mut IConnector),
+    add_error: unsafe extern "system" fn(&mut IConnector, u16, *const u16, *const u16, c_long) -> bool,
+    read: unsafe extern "system" fn(&mut IConnector, *const u16, *const Variant, *mut c_long, *const *const u16) -> bool,
+    write: unsafe extern "system" fn(&mut IConnector, *const u16, *const Variant) -> bool,
+    register_profile_as: unsafe extern "system" fn(&mut IConnector, *const u16) -> bool,
+    set_event_buffer_depths: unsafe extern "system" fn(&mut IConnector, c_long) -> bool,
+    get_event_buffer_depths: unsafe extern "system" fn(&mut IConnector) -> c_long,
+    external_event: unsafe extern "system" fn(&mut IConnector, *const u16, *const u16, *const u16) -> bool,
+    clean_event_buffer: unsafe extern "system" fn(&mut IConnector),
+    set_status_line: unsafe extern "system" fn(&mut IConnector, *const u16) -> bool,
+    reset_status_line: unsafe extern "system" fn(&mut IConnector),
+    get_interface: unsafe extern "system" fn(&IConnector, Interface) -> *const c_void,
 }
 
 #[repr(C)]
@@ -46,16 +47,16 @@ pub struct IConnector {
 }
 
 impl IConnector {
-    pub fn add_error(&mut self, code: u16, source: &str, descr: &str, scode: i64, manager: &mut IMemoryManager) -> bool {
+    pub fn add_error(&mut self, code: u16, source: &str, descr: &str, scode: c_long, manager: &mut IMemoryManager) -> bool {
         let source = manager.copy_utf16_str(source);
         let descr = manager.copy_utf16_str(descr);
         unsafe { (self.vtable.as_mut().add_error)(self, code, source, descr, scode) }
     }
 
-    pub fn read(&mut self, prop_name: &str, value: &mut Variant, error: &mut u64, error_description: &mut String, manager: &mut IMemoryManager) -> bool {
+    pub fn read(&mut self, prop_name: &str, value: &mut Variant, error: &mut c_long, error_description: &mut String, manager: &mut IMemoryManager) -> bool {
         let prop_name = manager.copy_utf16_str(prop_name);
         let value = value as *mut Variant;
-        let error = error as *mut u64;
+        let error = error as *mut c_long;
         let mut error_description_ptr = std::ptr::null();
 
         let result = unsafe { (self.vtable.as_mut().read)(self, prop_name, value, error, &error_description_ptr) };
@@ -76,11 +77,11 @@ impl IConnector {
         unsafe { (self.vtable.as_mut().register_profile_as)(self, profile_name) }
     }
 
-    pub fn set_event_buffer_depths(&mut self, depths: u64) -> bool {
+    pub fn set_event_buffer_depths(&mut self, depths: c_long) -> bool {
         unsafe { (self.vtable.as_mut().set_event_buffer_depths)(self, depths) }
     }
 
-    pub fn get_event_buffer_depths(&mut self) -> u64 {
+    pub fn get_event_buffer_depths(&mut self) -> c_long {
         unsafe { (self.vtable.as_mut().get_event_buffer_depths)(self) }
     }
 
@@ -116,7 +117,7 @@ impl IConnector {
 
         let mut ret= Variant::empty();
         let text = manager.copy_utf16_str(text);
-        let interface = unsafe { &mut *(interface as *mut IMessageBox) };
+        let interface = unsafe { &mut *(((interface as usize) - std::mem::size_of::<usize>()) as *mut IMessageBox) };
         let result = unsafe { (interface.vtable.as_mut().confirm)(interface, text, &mut ret as *mut Variant) };
         if result {
             Ok(ret)
@@ -133,7 +134,7 @@ impl IConnector {
         }
 
         let text = manager.copy_utf16_str(text);
-        let interface = unsafe { &mut *(interface as *mut IMessageBox) };
+        let interface = unsafe { &mut *(((interface as usize) - std::mem::size_of::<usize>()) as *mut IMessageBox) };
         let result = unsafe { (interface.vtable.as_mut().alert)(interface, text) };
         if result {
             Ok(())
@@ -150,7 +151,7 @@ impl IConnector {
             return Err(())
         }
 
-        let interface = unsafe { &mut *(interface as *mut IPlatformInfo) };
+        let interface = unsafe { &mut *(((interface as usize) - std::mem::size_of::<usize>()) as *mut IPlatformInfo) };
         let result = unsafe { (interface.vtable.as_mut().get_platform_info)(interface) };
         if result.is_null() {
             return Err(())
