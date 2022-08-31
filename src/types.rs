@@ -97,7 +97,7 @@ impl Variant {
             VariableType::VTYPE_BLOB => {
                 Some(Vec::from(
                     unsafe {
-                        std::slice::from_raw_parts(self.value.pstr_val.0 as *const u8, self.value.pstr_val.0 as usize)
+                        std::slice::from_raw_parts(self.value.pstr_val.0 as *const u8, self.value.pstr_val.1 as usize)
                     }
                 ))
             },
